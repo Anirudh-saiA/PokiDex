@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { projects, type Project } from '../data/content'
+import { RichText } from './RichText'
 
 function ProjectCard({ project }: { project: Project }) {
   const [flipped, setFlipped] = useState(false)
@@ -41,7 +42,7 @@ function ProjectCard({ project }: { project: Project }) {
           <div className="font-pixel mb-2 text-xs">{project.name.toUpperCase()}</div>
           {project.details.map((line) => (
             <p key={line} className="mb-2">
-              {line}
+              <RichText text={line} />
             </p>
           ))}
         </div>

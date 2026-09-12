@@ -1,4 +1,5 @@
 import { experience } from '../data/content'
+import { RichText } from './RichText'
 
 export function Experience() {
   return (
@@ -8,7 +9,7 @@ export function Experience() {
           Wild Encounter — Work Experience
         </h2>
 
-        <div className="border-[3px] border-ink bg-panel p-[18px]">
+        <div className="border-[3px] border-ink bg-panel p-4.5">
           <div className="font-pixel mb-2.5 flex flex-wrap justify-between gap-2 text-xs text-red">
             <span>{experience.company.toUpperCase()}</span>
             <span>{experience.role.toUpperCase()}</span>
@@ -18,7 +19,9 @@ export function Experience() {
           </p>
           <ul className="mt-2 list-disc space-y-2 pl-5 text-[19px]">
             {experience.moves.map((move) => (
-              <li key={move}>{move}</li>
+              <li key={move}>
+                <RichText text={move} />
+              </li>
             ))}
           </ul>
         </div>

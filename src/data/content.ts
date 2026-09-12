@@ -3,10 +3,17 @@ export const profile = {
   tagline: 'CS Undergraduate · AI & ML · Chennai, India',
   email: 'anirudhsai356@gmail.com',
   phone: '+91-83417-05946',
-  github: 'https://github.com/ankam-saianirudh',
+  github: 'https://github.com/Anirudh-saiA',
   linkedin: 'https://linkedin.com/in/saianirudhofficial',
   intro:
     "Third-year CS (AI & ML) student who likes turning messy real-world data into things that actually ship — a computer-vision inspection line running on a factory floor at Tata Steel, air-quality forecasts across six cities, a resume screener that reads PDFs faster than I can. Comfortable across the whole pipeline: data cleaning, model building, and the REST API someone else builds on top of.",
+}
+
+/** Single source of truth for the live-data trackers — one place to update if a handle changes. */
+export const liveTrackers = {
+  githubUsername: 'Anirudh-saiA',
+  leetcodeUsername: 'Anirudh_2024',
+  leetcodeProfileUrl: 'https://leetcode.com/u/Anirudh_2024/',
 }
 
 export type SkillLevel = 'strong' | 'solid' | 'growing'
@@ -65,8 +72,8 @@ export const experience = {
   period: 'Nov 2025 – Apr 2026',
   location: 'Chennai, India',
   moves: [
-    'Built a four-stage computer-vision inspection pipeline (Python, OpenCV) — acquisition, preprocessing, edge detection, contour extraction — automating TMT rebar quality checks against IS 1786 on 1,000+ images at sub-millimeter accuracy, cutting manual inspection time by 40%.',
-    'Deployed the pipeline into a field-facing mobile app with manufacturing engineers, reducing false-positive rod rejections by 25% and improving throughput.',
+    'Built a four-stage computer-vision inspection pipeline (Python, OpenCV) — acquisition, preprocessing, edge detection, contour extraction — automating TMT rebar quality checks against IS 1786 on {{1,000+ images}} at sub-millimeter accuracy, cutting manual inspection time by {{40%}}.',
+    'Deployed the pipeline into a field-facing mobile app with manufacturing engineers, reducing false-positive rod rejections by {{25%}} and improving throughput.',
   ],
 }
 
@@ -84,7 +91,7 @@ export const projects: Project[] = [
     summary: 'Real-time air-quality forecasting across six cities.',
     details: [
       'End-to-end ETL pipeline unifying multi-city weather and pollutant data for real-time air-quality forecasting.',
-      'Benchmarked 6 models; a stacked XGBoost + CatBoost + Ridge ensemble reached R²=0.9576, MAE=5.68, RMSE=7.24.',
+      'Benchmarked 6 models; a stacked XGBoost + CatBoost + Ridge ensemble reached {{R²=0.9576}}, {{MAE=5.68}}, {{RMSE=7.24}}.',
       'Served via MySQL + FastAPI, visualized on a React/TypeScript dashboard.',
     ],
   },
@@ -94,7 +101,7 @@ export const projects: Project[] = [
     summary: 'Parses PDF resumes and matches them to job roles.',
     details: [
       'Parsing pipeline extracting structured candidate data from unstructured PDF resumes.',
-      'TF-IDF + Cosine Similarity matching reached 87% job-role prediction accuracy across 12 categories on 500 resumes.',
+      'TF-IDF + Cosine Similarity matching reached {{87%}} job-role prediction accuracy across {{12 categories}} on {{500 resumes}}.',
       'FastAPI backend with a React + Tailwind frontend for live upload and skill-gap feedback.',
     ],
   },
@@ -129,6 +136,8 @@ export const navItems = [
   { id: 'skills', label: 'Pokédex' },
   { id: 'experience', label: 'Battle' },
   { id: 'projects', label: 'Items' },
+  { id: 'github', label: 'GitHub' },
+  { id: 'leetcode', label: 'Rank' },
   { id: 'badges', label: 'Badges' },
   { id: 'contact', label: 'Save' },
 ] as const
