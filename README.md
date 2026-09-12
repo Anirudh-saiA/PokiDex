@@ -1,32 +1,49 @@
-# React + TypeScript + Vite
+# ANIRUDH.EXE — Pixel Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A single-page portfolio for Ankam Sai Anirudh, styled as a vintage Game Boy–era
+Pokémon Red/Blue game. Skills render as Pokédex HP bars, the Tata Steel
+internship is a "wild encounter" battle card, projects are flippable trading
+cards, and certifications show up as gym badges.
 
-Currently, two official plugins are available:
+**Live:** https://poki-dex-two.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech stack
 
-## React Compiler
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS v4
+- Framer Motion (section reveal animations)
+- Deployed on Vercel
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+No backend — the contact section links out via `mailto:`, and the GitHub /
+LeetCode trackers fetch directly from public, CORS-enabled third-party APIs
+client-side (see [`src/data/content.ts`](src/data/content.ts) for the
+`liveTrackers` config and [`src/components/GithubTracker.tsx`](src/components/GithubTracker.tsx)
+/ [`src/components/LeetCodeTracker.tsx`](src/components/LeetCodeTracker.tsx)
+for the fetch calls).
 
-## Expanding the Oxlint configuration
+## Sections
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+| Section | Game metaphor |
+|---|---|
+| Hero / About | Overworld tile with an arrow-key-controlled sprite + typewriter bio |
+| Skills | Pokédex entries, HP-style bars |
+| Experience | Wild Encounter battle box |
+| Projects | Flippable trading cards |
+| GitHub | Live trainer card, contribution heatmap, recent push/pull log |
+| LeetCode | Training record, per-difficulty solve bars |
+| Education & Certs | Gym badges |
+| Contact | "Save the game?" prompt |
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## Development
+
+```bash
+npm install
+npm run dev      # local dev server
+npm run build    # type-check + production build
+npm run preview  # serve the production build locally
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+All content (resume text, skills, projects, badges, tracker usernames) lives
+in [`src/data/content.ts`](src/data/content.ts) — edit there rather than in
+the components.
