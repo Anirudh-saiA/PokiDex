@@ -1,3 +1,4 @@
+import { BootScreen } from './components/BootScreen'
 import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
 import { Skills } from './components/Skills'
@@ -13,6 +14,7 @@ import { Reveal } from './components/Reveal'
 function App() {
   return (
     <>
+      <BootScreen />
       <Nav />
       <main>
         {/* Hero is never wrapped in a reveal animation — it must be visible

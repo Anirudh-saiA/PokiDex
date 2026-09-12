@@ -6,7 +6,7 @@ export const profile = {
   github: 'https://github.com/Anirudh-saiA',
   linkedin: 'https://linkedin.com/in/saianirudhofficial',
   intro:
-    "Third-year CS (AI & ML) student who likes turning messy real-world data into things that actually ship — a computer-vision inspection line running on a factory floor at Tata Steel, air-quality forecasts across six cities, a resume screener that reads PDFs faster than I can. Comfortable across the whole pipeline: data cleaning, model building, and the REST API someone else builds on top of.",
+    "Fourth-year CS (AI & ML) student who likes turning messy real-world data into things that actually ship — a computer-vision inspection line running on a factory floor at Tata Steel, air-quality forecasts across six cities, a resume screener that reads PDFs faster than I can. Comfortable across the whole pipeline: data cleaning, model building, and the REST API someone else builds on top of.",
 }
 
 /** Single source of truth for the live-data trackers — one place to update if a handle changes. */

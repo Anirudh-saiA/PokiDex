@@ -11,7 +11,7 @@ function ProjectCard({ project }: { project: Project }) {
     <button
       type="button"
       onClick={() => setFlipped((f) => !f)}
-      className="group h-70 w-full text-left perspective-[1000px]"
+      className="group h-70 w-full text-left perspective-[1000px] transition-transform duration-200 hover:-translate-y-1 motion-reduce:hover:translate-y-0"
       aria-pressed={flipped}
       aria-label={`${project.name}, ${project.type}. Press to ${flipped ? 'show the front' : 'reveal details'}.`}
     >

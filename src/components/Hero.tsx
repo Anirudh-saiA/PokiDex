@@ -6,6 +6,14 @@ const STEP = 18
 const SPRITE_WIDTH = 22
 const MARGIN = 4
 
+const SPARKLES = [
+  { left: 15, top: 30, delay: 0 },
+  { left: 45, top: 55, delay: 1.2 },
+  { left: 70, top: 25, delay: 2.1 },
+  { left: 85, top: 60, delay: 0.7 },
+  { left: 30, top: 70, delay: 3 },
+]
+
 export function Hero() {
   const reducedMotion = usePrefersReducedMotion()
   const stageRef = useRef<HTMLDivElement | null>(null)
@@ -83,6 +91,15 @@ export function Hero() {
         >
           <span className="absolute -top-2.5 left-0.5 h-2.5 w-3.5 border-2 border-ink bg-[#f2c199]" />
         </div>
+        {!reducedMotion &&
+          SPARKLES.map((s, i) => (
+            <span
+              key={i}
+              className="sparkle"
+              style={{ left: `${s.left}%`, top: `${s.top}%`, animationDelay: `${s.delay}s` }}
+              aria-hidden="true"
+            />
+          ))}
       </div>
       <p className="mt-1.5 text-sm opacity-70">use ← → arrow keys to walk</p>
 

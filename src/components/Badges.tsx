@@ -14,10 +14,10 @@ export function Badges() {
           {badges.map((badge) => (
             <li
               key={badge}
-              className="w-[150px] border-[3px] border-ink bg-panel p-3 text-center"
+              className="group w-[150px] border-[3px] border-ink bg-panel p-3 text-center transition-transform duration-200 hover:-translate-y-0.5"
             >
               <span
-                className="mx-auto mb-2 block h-11 w-11 rounded-full border-[3px] border-ink bg-yellow"
+                className="mx-auto mb-2 block h-11 w-11 rounded-full border-[3px] border-ink bg-yellow group-hover:[animation:badge-wobble_0.5s_ease-in-out] motion-reduce:group-hover:animate-none"
                 aria-hidden="true"
               />
               <p className="m-0 mt-1 text-[15px]">{badge}</p>
