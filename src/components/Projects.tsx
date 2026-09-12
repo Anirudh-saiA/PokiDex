@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { projects, type Project } from '../data/content'
 import { RichText } from './RichText'
+import { SectionBanner } from './SectionBanner'
+import { TypeBadge } from './TypeBadge'
 
 function ProjectCard({ project }: { project: Project }) {
   const [flipped, setFlipped] = useState(false)
@@ -11,7 +13,7 @@ function ProjectCard({ project }: { project: Project }) {
     <button
       type="button"
       onClick={() => setFlipped((f) => !f)}
-      className="group h-70 w-full text-left perspective-[1000px] transition-transform duration-200 hover:-translate-y-1 motion-reduce:hover:translate-y-0"
+      className="group h-80 w-full text-left perspective-[1000px] transition-transform duration-200 hover:-translate-y-1 motion-reduce:hover:translate-y-0"
       aria-pressed={flipped}
       aria-label={`${project.name}, ${project.type}. Press to ${flipped ? 'show the front' : 'reveal details'}.`}
     >
@@ -21,15 +23,19 @@ function ProjectCard({ project }: { project: Project }) {
       >
         <div
           id={frontId}
-          className="absolute inset-0 flex flex-col justify-between border-[3px] border-ink p-4 backface-hidden"
-          style={{ background: 'linear-gradient(160deg, var(--color-yellow), #fff3c4)' }}
+          className="absolute inset-0 flex flex-col justify-between border-[3px] border-ink bg-panel p-4 backface-hidden"
         >
           <div>
-            <span className="font-pixel mb-2.5 inline-block bg-blue px-2 py-1 text-[11px] text-white">
-              {project.type.toUpperCase()}
-            </span>
-            <div className="font-pixel text-xs leading-relaxed">{project.name.toUpperCase()}</div>
+            <TypeBadge tone={project.tone}>{project.type}</TypeBadge>
+            <div className="font-pixel mt-2.5 text-xs leading-relaxed">{project.name.toUpperCase()}</div>
             <p className="mt-3 text-lg">{project.summary}</p>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {project.techStack.map((tech) => (
+                <span key={tech} className="border border-ink/40 px-1.5 py-0.5 text-sm opacity-70">
+                  {tech}
+                </span>
+              ))}
+            </div>
           </div>
           <div className="text-right text-sm opacity-70">tap ▶</div>
         </div>
@@ -55,9 +61,7 @@ export function Projects() {
   return (
     <section id="projects" className="mx-auto max-w-205 px-4 py-10">
       <div className="screen">
-        <h2 className="font-pixel mb-5 inline-block bg-ink px-3 py-2 text-sm text-cream">
-          Item Bag — Projects
-        </h2>
+        <SectionBanner title="Silph Bag: Key AI Repositories" tag="3 items" />
         <p className="-mt-2 mb-4 text-base opacity-70">Tap or press Enter on a card to flip it.</p>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-4.5">
           {projects.map((project) => (

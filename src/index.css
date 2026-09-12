@@ -17,6 +17,10 @@
   --color-hp-green: #6bbf4a;
   --color-hp-yellow: #f0c832;
   --color-hp-red: #ea7c3c;
+  --color-purple: #8a63c9;
+  --color-orange: #e2812a;
+
+  --font-mono-term: 'VT323', ui-monospace, 'Courier New', monospace;
 }
 
 @layer base {
@@ -103,6 +107,76 @@
     background: var(--color-yellow);
     box-shadow: 0 0 0 2px rgb(255 255 255 / 0.35);
     animation: sparkle-float 4.5s ease-in-out infinite;
+  }
+
+  /* Section banner — the "ROUTE 01 / WILD BATTLE ENCOUNTER" style bars */
+  .banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border: 3px solid var(--color-ink);
+    box-shadow: 4px 4px 0 var(--color-ink);
+    padding: 0.6rem 0.9rem;
+    margin-bottom: 1.25rem;
+    color: var(--color-cream);
+  }
+  .banner-red {
+    background: var(--color-red);
+  }
+  .banner-green {
+    background: var(--color-green);
+  }
+  .banner-blue {
+    background: var(--color-blue);
+  }
+
+  /* Stat tile — big pixel number + label, used for headline metrics */
+  .stat-tile {
+    border: 3px solid var(--color-ink);
+    background: var(--color-panel);
+    box-shadow: 3px 3px 0 var(--color-ink);
+    padding: 0.85rem 0.75rem;
+    text-align: center;
+  }
+  .stat-tile-value {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    line-height: 1.3;
+  }
+  .stat-tile-label {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    opacity: 0.75;
+  }
+
+  /* Type pill — colored tag badges (project type, difficulty tags, etc.) */
+  .type-pill {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    color: #fff;
+    padding: 0.3rem 0.55rem;
+    border: 2px solid var(--color-ink);
+  }
+
+  /* Terminal log — console-style activity feed */
+  .terminal-log {
+    background: var(--color-ink);
+    color: #d7f5c6;
+    font-family: var(--font-mono-term);
+    font-size: 17px;
+    border: 3px solid var(--color-ink);
+    box-shadow: 3px 3px 0 rgb(38 38 30 / 0.4);
+    padding: 0.9rem 1rem;
+    overflow-x: auto;
+  }
+  .terminal-log-line {
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.5;
   }
 }
 

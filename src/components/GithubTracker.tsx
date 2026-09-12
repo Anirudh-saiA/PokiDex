@@ -5,11 +5,16 @@ import { useRecentActivity } from '../hooks/useRecentActivity'
 import { timeAgo } from '../lib/time'
 import { TrackerError, TrackerLoading } from './TrackerStatus'
 import { Highlight } from './RichText'
+import { SectionBanner } from './SectionBanner'
+import { StatTile } from './StatTile'
 
 const USERNAME = liveTrackers.githubUsername
 const PROFILE_URL = `https://api.github.com/users/${USERNAME}`
-const REPOS_URL = `https://api.github.com/users/${USERNAME}/repos?sort=updated&per_page=6`
+// per_page=100 covers this account's full repo list in one call, so the
+// star total below is accurate rather than only summing the 6 shown below.
+const REPOS_URL = `https://api.github.com/users/${USERNAME}/repos?sort=updated&per_page=100`
 const CONTRIBUTIONS_URL = `https://github-contributions-api.jogruber.de/v4/${USERNAME}?y=last`
+const REPOS_SHOWN = 6
 
 interface GithubProfile {
   login: string
@@ -46,6 +51,11 @@ interface ContributionsResponse {
 
 const LEVEL_COLORS = ['#e6e2d0', '#c9e8a8', '#9bd66b', '#6bbf4a', '#4f7a34']
 
+const LOG_TAG: Record<'commit' | 'pull_request', { label: string; color: string }> = {
+  commit: { label: 'COMMIT', color: '#9bd66b' },
+  pull_request: { label: 'PULL REQ', color: '#8fc4ff' },
+}
+
 function buildWeeks(days: ContributionDay[]): (ContributionDay | null)[][] {
   const weeks: (ContributionDay | null)[][] = []
   let week: (ContributionDay | null)[] = new Array(7).fill(null)
@@ -72,27 +82,25 @@ export function GithubTracker() {
     () => (contributions.status === 'success' ? buildWeeks(contributions.data.contributions) : []),
     [contributions],
   )
+  const totalStars = repos.status === 'success' ? repos.data.reduce((sum, r) => sum + r.stargazers_count, 0) : 0
 
   return (
     <section id="github" className="mx-auto max-w-205 px-4 py-10">
       <div className="screen">
-        <h2 className="font-pixel mb-5 inline-block bg-ink px-3 py-2 text-sm text-cream">
-          GitHub Log — Live Trainer Card
-        </h2>
+        <SectionBanner title="Trainer Card: GitHub Telemetry" tag="Live" />
 
         {profile.status === 'loading' && <TrackerLoading label="trainer card" />}
         {profile.status === 'error' && (
           <TrackerError label="GitHub" message={profile.error} href={`https://github.com/${USERNAME}`} />
         )}
         {profile.status === 'success' && (
-          <div className="mb-6 flex flex-wrap items-center gap-4">
+          <div className="mb-5 flex flex-wrap items-center gap-4">
             <img
               src={profile.data.avatar_url}
               alt={`${profile.data.login}'s GitHub avatar`}
-              width={72}
-              height={72}
+              width={64}
+              height={64}
               className="border-[3px] border-ink"
-              style={{ imageRendering: 'auto' }}
             />
             <div className="min-w-0 flex-1">
               <a
@@ -103,13 +111,22 @@ export function GithubTracker() {
               >
                 @{profile.data.login}
               </a>
-              {profile.data.bio && <p className="mt-1.5 mb-2 text-lg">{profile.data.bio}</p>}
-              <div className="flex flex-wrap gap-2 text-base">
-                <Highlight>{profile.data.public_repos} repos</Highlight>
-                <Highlight>{profile.data.followers} followers</Highlight>
-                <Highlight>{profile.data.following} following</Highlight>
-              </div>
+              {profile.data.bio && <p className="mt-1.5 mb-0 text-lg">{profile.data.bio}</p>}
             </div>
+          </div>
+        )}
+
+        {/* Stat tiles */}
+        {profile.status === 'success' && repos.status === 'success' && (
+          <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <StatTile label="Public Repos" value={profile.data.public_repos} accent="red" />
+            <StatTile label="Followers" value={profile.data.followers} accent="blue" />
+            <StatTile
+              label="Pull Requests"
+              value={activity.status === 'success' ? activity.data.totalPullRequests : 0}
+              accent="green"
+            />
+            <StatTile label="Stars Earned" value={totalStars} accent="orange" />
           </div>
         )}
 
@@ -129,7 +146,7 @@ export function GithubTracker() {
               <Highlight>{contributions.data.total.lastYear ?? 0} contributions</Highlight> in the last year
             </p>
             <div className="overflow-x-auto pb-2">
-              <div className="grid w-max grid-flow-col grid-rows-7 gap-[3px]">
+              <div className="grid w-max grid-flow-col grid-rows-7 gap-0.75">
                 {weeks.flatMap((week, wi) =>
                   week.map((day, di) => (
                     <div
@@ -145,8 +162,8 @@ export function GithubTracker() {
           </div>
         )}
 
-        {/* Activity log */}
-        <h3 className="font-pixel my-4 text-[13px] text-blue">Battle Log — Recent Pushes &amp; Pulls</h3>
+        {/* Activity log, terminal style */}
+        <h3 className="font-pixel my-4 text-[13px] text-blue">Recent Repository Log</h3>
         {(activity.status === 'loading' || (repos.status === 'loading' && activity.status !== 'success')) && (
           <TrackerLoading label="activity log" />
         )}
@@ -154,17 +171,25 @@ export function GithubTracker() {
           <TrackerError label="the activity log" message={activity.error} href={`https://github.com/${USERNAME}`} />
         )}
         {activity.status === 'success' && (
-          <ul className="mb-6 border-[3px] border-ink bg-panel divide-y-2 divide-ink/15 text-[17px]">
-            {activity.data.length === 0 && <li className="p-3 opacity-70">No recent activity to show.</li>}
-            {activity.data.map((item) => (
-              <li key={item.id} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 p-3">
-                <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-ink hover:text-blue">
-                  {item.kind === 'commit' ? `Pushed "${item.text}" to ${item.repo}` : `${item.text} (${item.repo})`}
+          <div className="terminal-log mb-6">
+            {activity.data.items.length === 0 && <p className="terminal-log-line opacity-70">No recent activity to show.</p>}
+            {activity.data.items.map((item) => {
+              const tag = LOG_TAG[item.kind]
+              return (
+                <a
+                  key={item.id}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="terminal-log-line block hover:underline"
+                >
+                  <span style={{ color: tag.color }}>[{tag.label}]</span> {item.text}{' '}
+                  <span className="opacity-60">→ {item.repo}</span>{' '}
+                  <span className="opacity-50">({timeAgo(item.date)})</span>
                 </a>
-                <span className="text-sm opacity-60 whitespace-nowrap">{timeAgo(item.date)}</span>
-              </li>
-            ))}
-          </ul>
+              )
+            })}
+          </div>
         )}
 
         {/* Recent repos */}
@@ -175,7 +200,7 @@ export function GithubTracker() {
         )}
         {repos.status === 'success' && (
           <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3.5">
-            {repos.data.map((repo) => (
+            {repos.data.slice(0, REPOS_SHOWN).map((repo) => (
               <a
                 key={repo.id}
                 href={repo.html_url}

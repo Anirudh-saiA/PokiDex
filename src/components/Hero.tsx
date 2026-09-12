@@ -75,6 +75,10 @@ export function Hero() {
 
   return (
     <section id="about" className="mx-auto max-w-205 px-4 pt-9 text-center" aria-label="About">
+      <div className="banner banner-red mx-auto mb-5 max-w-150 text-left">
+        <h1 className="font-pixel text-[11px] leading-relaxed sm:text-xs">■ Route 01 — Pallet Town HQ</h1>
+        <span className="font-pixel shrink-0 border-2 border-cream/70 px-2 py-1 text-[9px]">Signal: Online</span>
+      </div>
       <div
         ref={stageRef}
         className="relative mx-auto mb-3 h-[120px] max-w-[600px] overflow-hidden border-[3px] border-ink"

@@ -1,7 +1,8 @@
-import { liveTrackers } from '../data/content'
+import { leetcodeTopics, liveTrackers } from '../data/content'
 import { useFetch } from '../hooks/useFetch'
 import { useInView } from '../hooks/useInView'
-import { Highlight } from './RichText'
+import { SectionBanner } from './SectionBanner'
+import { StatTile } from './StatTile'
 import { TrackerError, TrackerLoading } from './TrackerStatus'
 
 const USERNAME = liveTrackers.leetcodeUsername
@@ -10,6 +11,7 @@ const STATS_URL = `https://leetcode-api-faisalshohag.vercel.app/${USERNAME}`
 interface LeetCodeStats {
   totalSolved: number
   totalQuestions: number
+  totalSubmissions: { difficulty: string; count: number; submissions: number }[]
   easySolved: number
   totalEasy: number
   mediumSolved: number
@@ -60,13 +62,13 @@ function DifficultyBar({
 
 export function LeetCodeTracker() {
   const stats = useFetch<LeetCodeStats>(STATS_URL)
+  const allSubs = stats.status === 'success' ? stats.data.totalSubmissions.find((s) => s.difficulty === 'All') : null
+  const acceptanceRate = allSubs && allSubs.submissions > 0 ? Math.round((allSubs.count / allSubs.submissions) * 100) : null
 
   return (
     <section id="leetcode" className="mx-auto max-w-205 px-4 py-10">
       <div className="screen">
-        <h2 className="font-pixel mb-5 inline-block bg-ink px-3 py-2 text-sm text-cream">
-          LeetCode Log — Training Record
-        </h2>
+        <SectionBanner title="Battle Tower: Algorithm Arena" tag="Live" />
 
         {stats.status === 'loading' && <TrackerLoading label="training record" />}
         {stats.status === 'error' && (
@@ -74,12 +76,13 @@ export function LeetCodeTracker() {
         )}
         {stats.status === 'success' && (
           <>
-            <div className="mb-5 flex flex-wrap items-center gap-3 text-lg">
-              <Highlight>{stats.data.totalSolved} solved</Highlight>
-              <span>out of {stats.data.totalQuestions} questions</span>
-              <Highlight>Rank #{stats.data.ranking.toLocaleString('en-US')}</Highlight>
+            <div className="mb-6 grid grid-cols-3 gap-3">
+              <StatTile label="Problems Solved" value={stats.data.totalSolved} accent="red" />
+              <StatTile label="Global Rank" value={stats.data.ranking} prefix="#" accent="blue" />
+              {acceptanceRate !== null && <StatTile label="Acceptance Rate" value={acceptanceRate} suffix="%" accent="green" />}
             </div>
-            <p className="mb-1 text-sm opacity-70">Bar width shows how your solved problems split across difficulties.</p>
+
+            <h3 className="font-pixel my-4 text-[13px] text-blue">Clearance Meters by Difficulty</h3>
             {DIFFICULTIES.map((d) => {
               const solved = stats.data[d.key]
               const share = stats.data.totalSolved > 0 ? (solved / stats.data.totalSolved) * 100 : 0
@@ -94,6 +97,15 @@ export function LeetCodeTracker() {
                 />
               )
             })}
+
+            <h3 className="font-pixel my-4 text-[13px] text-blue">Signature Battle Moves</h3>
+            <div className="flex flex-wrap gap-2">
+              {leetcodeTopics.map((topic) => (
+                <span key={topic} className="type-pill bg-purple">
+                  {topic}
+                </span>
+              ))}
+            </div>
           </>
         )}
 
@@ -101,7 +113,7 @@ export function LeetCodeTracker() {
           href={liveTrackers.leetcodeProfileUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-block text-base text-blue underline"
+          className="mt-5 inline-block text-base text-blue underline"
         >
           View full profile on LeetCode →
         </a>

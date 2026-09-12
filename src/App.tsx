@@ -1,3 +1,4 @@
+import { BgmPlayer } from './components/BgmPlayer'
 import { BootScreen } from './components/BootScreen'
 import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
@@ -43,6 +44,7 @@ function App() {
         </Reveal>
       </main>
       <Footer />
+      <BgmPlayer />
     </>
   )
 }

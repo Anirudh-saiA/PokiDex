@@ -75,12 +75,21 @@ export const experience = {
     'Built a four-stage computer-vision inspection pipeline (Python, OpenCV) — acquisition, preprocessing, edge detection, contour extraction — automating TMT rebar quality checks against IS 1786 on {{1,000+ images}} at sub-millimeter accuracy, cutting manual inspection time by {{40%}}.',
     'Deployed the pipeline into a field-facing mobile app with manufacturing engineers, reducing false-positive rod rejections by {{25%}} and improving throughput.',
   ],
+  stats: [
+    { label: 'Images Inspected', value: 1000, suffix: '+', accent: 'blue' as const },
+    { label: 'Faster Inspection', value: 40, suffix: '%', accent: 'green' as const },
+    { label: 'Fewer False Positives', value: 25, suffix: '%', accent: 'orange' as const },
+  ],
 }
+
+export type BadgeTone = 'red' | 'blue' | 'green' | 'purple' | 'orange' | 'yellow'
 
 export interface Project {
   name: string
   type: string
+  tone: BadgeTone
   summary: string
+  techStack: string[]
   details: string[]
 }
 
@@ -88,7 +97,9 @@ export const projects: Project[] = [
   {
     name: 'Urban AQI Prediction',
     type: 'Forecasting',
+    tone: 'blue',
     summary: 'Real-time air-quality forecasting across six cities.',
+    techStack: ['XGBoost', 'CatBoost', 'FastAPI', 'MySQL', 'React'],
     details: [
       'End-to-end ETL pipeline unifying multi-city weather and pollutant data for real-time air-quality forecasting.',
       'Benchmarked 6 models; a stacked XGBoost + CatBoost + Ridge ensemble reached {{R²=0.9576}}, {{MAE=5.68}}, {{RMSE=7.24}}.',
@@ -98,7 +109,9 @@ export const projects: Project[] = [
   {
     name: 'Smart Resume Screener',
     type: 'NLP',
+    tone: 'purple',
     summary: 'Parses PDF resumes and matches them to job roles.',
+    techStack: ['Python', 'TF-IDF', 'FastAPI', 'React', 'Tailwind'],
     details: [
       'Parsing pipeline extracting structured candidate data from unstructured PDF resumes.',
       'TF-IDF + Cosine Similarity matching reached {{87%}} job-role prediction accuracy across {{12 categories}} on {{500 resumes}}.',
@@ -108,13 +121,18 @@ export const projects: Project[] = [
   {
     name: 'TMT Rib Analyzer',
     type: 'Computer Vision',
+    tone: 'red',
     summary: 'Precision rib-profile measurement from images.',
+    techStack: ['OpenCV', 'NumPy', 'SciPy', 'Matplotlib'],
     details: [
       'Computer-vision system for automated TMT rib profile analysis using edge, contour, and peak detection.',
       'Pixel-to-millimeter calibration (NumPy, SciPy, Matplotlib) measuring rib height, spacing, and count precisely.',
     ],
   },
 ]
+
+/** Curated, not live — LeetCode's public stats API doesn't reliably expose a per-topic breakdown. */
+export const leetcodeTopics = ['Dynamic Programming', 'Graph Algorithms (DFS/BFS)', 'Binary Search & Two Pointers']
 
 export const education = {
   school: 'SRM Institute of Science and Technology, Chennai',
