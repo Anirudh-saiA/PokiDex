@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { liveTrackers } from '../data/content'
 import { useFetch } from '../hooks/useFetch'
+import { useRecentActivity } from '../hooks/useRecentActivity'
 import { timeAgo } from '../lib/time'
 import { TrackerError, TrackerLoading } from './TrackerStatus'
 import { Highlight } from './RichText'
@@ -8,7 +9,6 @@ import { Highlight } from './RichText'
 const USERNAME = liveTrackers.githubUsername
 const PROFILE_URL = `https://api.github.com/users/${USERNAME}`
 const REPOS_URL = `https://api.github.com/users/${USERNAME}/repos?sort=updated&per_page=6`
-const EVENTS_URL = `https://api.github.com/users/${USERNAME}/events/public?per_page=15`
 const CONTRIBUTIONS_URL = `https://github-contributions-api.jogruber.de/v4/${USERNAME}?y=last`
 
 interface GithubProfile {
@@ -31,14 +31,6 @@ interface GithubRepo {
   stargazers_count: number
   forks_count: number
   updated_at: string
-}
-
-interface GithubEvent {
-  id: string
-  type: string
-  repo: { name: string }
-  created_at: string
-  payload: { action?: string; commits?: unknown[]; ref_type?: string; ref?: string }
 }
 
 interface ContributionDay {
@@ -69,39 +61,12 @@ function buildWeeks(days: ContributionDay[]): (ContributionDay | null)[][] {
   return weeks
 }
 
-function describeEvent(event: GithubEvent): string {
-  const repo = event.repo.name.split('/')[1] ?? event.repo.name
-  switch (event.type) {
-    case 'PushEvent': {
-      const count = event.payload.commits?.length ?? 1
-      return `Pushed ${count} commit${count === 1 ? '' : 's'} to ${repo}`
-    }
-    case 'PullRequestEvent':
-      return `${capitalize(event.payload.action ?? 'updated')} a pull request in ${repo}`
-    case 'CreateEvent':
-      return `Created ${event.payload.ref_type ?? 'repo'}${event.payload.ref ? ` "${event.payload.ref}"` : ''} in ${repo}`
-    case 'WatchEvent':
-      return `Starred ${repo}`
-    case 'ForkEvent':
-      return `Forked ${repo}`
-    case 'IssuesEvent':
-      return `${capitalize(event.payload.action ?? 'updated')} an issue in ${repo}`
-    case 'IssueCommentEvent':
-      return `Commented on an issue in ${repo}`
-    default:
-      return `${event.type.replace('Event', '')} in ${repo}`
-  }
-}
-
-function capitalize(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1)
-}
-
 export function GithubTracker() {
   const profile = useFetch<GithubProfile>(PROFILE_URL)
   const repos = useFetch<GithubRepo[]>(REPOS_URL)
-  const events = useFetch<GithubEvent[]>(EVENTS_URL)
   const contributions = useFetch<ContributionsResponse>(CONTRIBUTIONS_URL)
+  const repoNames = repos.status === 'success' ? repos.data.map((r) => r.name) : null
+  const activity = useRecentActivity(USERNAME, repoNames)
 
   const weeks = useMemo(
     () => (contributions.status === 'success' ? buildWeeks(contributions.data.contributions) : []),
@@ -182,17 +147,21 @@ export function GithubTracker() {
 
         {/* Activity log */}
         <h3 className="font-pixel my-4 text-[13px] text-blue">Battle Log — Recent Pushes &amp; Pulls</h3>
-        {events.status === 'loading' && <TrackerLoading label="activity log" />}
-        {events.status === 'error' && (
-          <TrackerError label="the activity log" message={events.error} href={`https://github.com/${USERNAME}`} />
+        {(activity.status === 'loading' || (repos.status === 'loading' && activity.status !== 'success')) && (
+          <TrackerLoading label="activity log" />
         )}
-        {events.status === 'success' && (
+        {activity.status === 'error' && (
+          <TrackerError label="the activity log" message={activity.error} href={`https://github.com/${USERNAME}`} />
+        )}
+        {activity.status === 'success' && (
           <ul className="mb-6 border-[3px] border-ink bg-panel divide-y-2 divide-ink/15 text-[17px]">
-            {events.data.length === 0 && <li className="p-3 opacity-70">No public activity recently.</li>}
-            {events.data.slice(0, 8).map((event) => (
-              <li key={event.id} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 p-3">
-                <span>{describeEvent(event)}</span>
-                <span className="text-sm opacity-60">{timeAgo(event.created_at)}</span>
+            {activity.data.length === 0 && <li className="p-3 opacity-70">No recent activity to show.</li>}
+            {activity.data.map((item) => (
+              <li key={item.id} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 p-3">
+                <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-ink hover:text-blue">
+                  {item.kind === 'commit' ? `Pushed "${item.text}" to ${item.repo}` : `${item.text} (${item.repo})`}
+                </a>
+                <span className="text-sm opacity-60 whitespace-nowrap">{timeAgo(item.date)}</span>
               </li>
             ))}
           </ul>
