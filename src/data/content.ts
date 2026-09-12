@@ -30,7 +30,12 @@ const skill = (name: string, value: number): Skill => ({ name, value, level: lev
 export const skillGroups: SkillGroup[] = [
   {
     title: 'Languages',
-    skills: [skill('Python', 95), skill('SQL', 85), skill('Java / JavaScript / TypeScript', 65)],
+    skills: [
+      skill('Python', 95),
+      skill('SQL', 85),
+      skill('Java / JavaScript / TypeScript', 65),
+      skill('C++', 60),
+    ],
   },
   {
     title: 'Data & Machine Learning',

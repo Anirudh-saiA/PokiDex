@@ -10,22 +10,43 @@ export function Hero() {
   const reducedMotion = usePrefersReducedMotion()
   const stageRef = useRef<HTMLDivElement | null>(null)
   const [position, setPosition] = useState(20)
-  const [typed, setTyped] = useState(reducedMotion ? profile.intro : '')
+  // Start with real content on first paint (never an empty string) — if every
+  // effect below failed to run, the bio would still read as one full character
+  // rather than a blank box.
+  const [typed, setTyped] = useState(reducedMotion ? profile.intro : profile.intro.slice(0, 1))
+  const timeoutRef = useRef<number | null>(null)
 
-  // Typewriter intro, once.
+  // Typewriter intro, once. Purely a visual layer on top of content that's
+  // already present — the effect only ever reveals more of `profile.intro`,
+  // it never gates whether the paragraph exists.
   useEffect(() => {
     if (reducedMotion) return
-    let index = 0
-    let frame: number
+
+    // React 19 Strict Mode runs this effect twice in dev: mount, cleanup,
+    // mount again. Track the pending timeout in a ref (not a closure local)
+    // and clear it defensively before scheduling a new one, so the second
+    // invocation can't leave a stray timer racing the first.
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+
+    let index = 1 // char 0 is already on screen from initial state
     const tick = () => {
       index += 1
       setTyped(profile.intro.slice(0, index))
       if (index < profile.intro.length) {
-        frame = window.setTimeout(tick, 14)
+        timeoutRef.current = window.setTimeout(tick, 14)
       }
     }
-    frame = window.setTimeout(tick, 14)
-    return () => window.clearTimeout(frame)
+    timeoutRef.current = window.setTimeout(tick, 14)
+
+    return () => {
+      if (timeoutRef.current !== null) {
+        window.clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
+      }
+    }
   }, [reducedMotion])
 
   // Arrow-key walker easter egg.
